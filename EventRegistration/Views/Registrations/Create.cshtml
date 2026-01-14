@@ -1,0 +1,93 @@
+﻿@model EventRegistration.Models.Registration
+
+@{
+    ViewData["Title"] = "活動報名";
+}
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">活動報名表單</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>活動名稱：</strong>@ViewBag.EventName<br />
+                    <strong>活動類型：</strong><span class="badge bg-info text-dark">@ViewBag.EventType</span>
+                </div>
+
+                <!-- 顯示驗證摘要錯誤 -->
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <form asp-action="Create" method="post">
+                    <!-- 隱藏欄位：EventId -->
+                    <input type="hidden" asp-for="EventId" />
+
+                    <!-- 學生姓名 -->
+                    <div class="mb-3">
+                        <label asp-for="StudentName" class="form-label"></label>
+                        <input asp-for="StudentName" class="form-control" placeholder="請輸入真實姓名" />
+                        <span asp-validation-for="StudentName" class="text-danger"></span>
+                    </div>
+
+                    <!-- 學號 -->
+                    <div class="mb-3">
+                        <label asp-for="StudentId" class="form-label"></label>
+                        <input asp-for="StudentId" class="form-control" placeholder="例：A1234567" />
+                        <span asp-validation-for="StudentId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" type="email" placeholder="example@mail.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- 參加人數 -->
+                    <div class="mb-3">
+                        <label asp-for="ParticipantCount" class="form-label"></label>
+                        <input asp-for="ParticipantCount" class="form-control" type="number" min="1" max="10" />
+                        <span asp-validation-for="ParticipantCount" class="text-danger"></span>
+                        <small class="form-text text-muted">可攜伴參加，每次最多 10 人</small>
+                    </div>
+
+                    <!-- 素食需求 -->
+                    <div class="mb-3 form-check">
+                        <input asp-for="IsVegetarian" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsVegetarian" class="form-check-label"></label>
+                    </div>
+
+                    <!-- 聯絡電話 -->
+                    <div class="mb-3">
+                        <label asp-for="ContactPhone" class="form-label"></label>
+                        <input asp-for="ContactPhone" class="form-control" placeholder="0912345678" />
+                        <span asp-validation-for="ContactPhone" class="text-danger"></span>
+                    </div>
+
+                    <!-- 備註 -->
+                    <div class="mb-3">
+                        <label asp-for="Remarks" class="form-label"></label>
+                        <textarea asp-for="Remarks" class="form-control" rows="3" 
+                                  placeholder="其他需求或注意事項（選填）"></textarea>
+                        <span asp-validation-for="Remarks" class="text-danger"></span>
+                    </div>
+
+                    <!-- 按鈕區 -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">確認送出報名</button>
+                        <a asp-controller="Events" asp-action="Details" asp-route-id="@ViewBag.EventId" 
+                           class="btn btn-outline-secondary">
+                            取消
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* ⭐ 啟用前端驗證 *@
+    <partial name="_ValidationScriptsPartial" />
+}
