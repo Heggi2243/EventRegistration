@@ -35,7 +35,7 @@ namespace EventRegistration.Controllers
                 .Where(r => r.EventId == eventId)
                 .SumAsync(r => r.ParticipantCount);
 
-            if (totalRegistered >= eventId.MaxParticipants)
+            if (totalRegistered >= eventItem.MaxParticipants)
             {
                 TempData["ErrorMessage"] = "此活動報名已額滿";
                 return RedirectToAction("Details", "Events", new { id = eventId });
@@ -53,7 +53,7 @@ namespace EventRegistration.Controllers
         // 處理報名表單提交
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EventId, StudentName, StudentId, Email, ParticipantCount, IsVegetarian, ContactPhone, Remarks")])
+        public async Task<IActionResult> Create([Bind("EventId,StudentName,StudentId,Email,ParticipantCount,IsVegetarian,ContactPhone,Remarks")] Registration registration)
         {
             // 重新檢查活動是否存在且開放
             var eventItem = await _context.Events.FindAsync(registration.EventId);

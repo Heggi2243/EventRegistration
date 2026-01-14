@@ -1,0 +1,60 @@
+﻿@model IEnumerable<EventRegistration.Models.Event>
+
+    @{
+        ViewData["Title"] = "活動列表";
+    }
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="display-5">目前開放報名的活動</h2>
+            <p class="text-muted">請選擇您想參加的活動進行報名</p>
+        </div>
+    </div>
+
+    <div class="row">
+    @if (Model.Any()) //確保model有東西
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">@item.EventName</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <span class="badge bg-info text-dark">@item.EventType</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>活動日期：</strong><br />
+                            @item.StartDate.ToString("yyyy/MM/dd")
+                            @if (item.StartDate != item.EndDate)
+                        {
+                            <text> ~ @item.EndDate.ToString("yyyy/MM/dd")</text>
+                        }
+                        </p>
+                        <p class="mb-0">
+                            <strong>人數上限：</strong> @item.MaxParticipants 人
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a asp-controller="Events" asp-action="Details" asp-route-id="@item.Id"
+                            class="btn btn-primary w-100">
+                            查看詳情 & 報名
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-info text-center" role="alert">
+                <h4>目前沒有開放報名的活動</h4>
+                <p class="mb-0">請稍後再回來查看</p>
+            </div>
+        </div>
+    }
+</div>
