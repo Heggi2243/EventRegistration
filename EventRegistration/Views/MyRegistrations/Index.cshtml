@@ -1,0 +1,177 @@
+﻿@{
+    ViewData["Title"] = "我的活動";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="display-5">📋 我的活動</h2>
+        <p class="text-muted">查看您的報名記錄與活動狀態</p>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <!-- TAB列表 -->
+        <ul class="nav nav-tabs" id="myRegistrationTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="registered-tab" data-bs-toggle="tab"
+                        data-bs-target="#registered" type="button" role="tab">
+                    已報名 <span class="badge bg-primary" id="registered-count">0</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="cancelled-tab" data-bs-toggle="tab" href="#cancelled" role="tab">
+                    已取消
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="completed-tab" data-bs-toggle="tab" href="#completed" role="tab">
+                    已結束
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="absent-tab" data-bs-toggle="tab" data-bs-target="#absent"
+                        type="button" role="tab">
+                    缺席紀錄
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab內容 -->
+        <div class="tab-content p-4 border border-top-0 rounded-bottom" id="myRegistrationsTabContent">
+            <!-- 已報名TAB -->
+            <div class="tab-pane fade show active" id="registered" role="tabpanel">
+                <div id="registeredContent">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 已取消TAB -->
+            <div class="tab-pane fade" id="cancelled" role="tabpanel">
+                <div id="cancelled-content" class="p-3">
+                    <div class="text-center">
+                        <div class="spinner-border text-warning" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 已結束TAB -->
+            <div class="tab-pane fade" id="completed" role="tabpanel">
+                <div id="completed-content" class="p-3">
+                    <div class="text-center">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 缺席紀錄TAB -->
+            <div class="tab-pane fade" id="absent" role="tabpanel">
+                <div id="absent-content" class="p-3">
+                    <div class="text-center">
+                        <div class="spinner-border text-danger" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const studentId = '@ViewBag.StudentId';
+
+            // 已報名活動
+            function loadRegistered() {
+                $.ajax({
+                    url: '@Url.Action("GetMyRegistrations", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId, status: 1 },
+                    success: function (data) {
+                        $('#registered-content').html(data);
+                    },
+                    error: function () {
+                        $('#registered-content').html('<div class="alert alert-danger">載入失敗，請重新整理頁面</div>');
+                    }
+                });
+            }
+
+            // 已取消活動
+            function loadCancelled() {
+                $.ajax({
+                    url: '@Url.Action("GetMyRegistrations", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId, status: 0 },
+                    success: function (data) {
+                        $('#cancelled-content').html(data);
+                    },
+                    error: function () {
+                        $('#cancelled-content').html('<div class="alert alert-danger">載入失敗，請重新整理頁面</div>');
+                    }
+                });
+            }
+
+            // 已結束活動
+            function loadCompleted() {
+                $.ajax({
+                    url: '@Url.Action("GetMyRegistrations", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId, status: 1, showCompleted: true },
+                    success: function (data) {
+                        $('#completed-content').html(data);
+                    },
+                    error: function () {
+                        $('#completed-content').html('<div class="alert alert-danger">載入失敗，請重新整理頁面</div>');
+                    }
+                });
+            }
+
+            // 缺席紀錄
+            function loadAbsent() {
+                $.ajax({
+                    url: '@Url.Action("GetMyRegistrations", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId, status: 3 },
+                    success: function (data) {
+                        $('#absent-content').html(data);
+                    },
+                    error: function () {
+                        $('#absent-content').html('<div class="alert alert-danger">載入失敗，請重新整理頁面</div>');
+                    }
+                });
+            }
+
+            // 頁面載入時先載入「已報名」TAB
+            loadRegistered();
+
+            // 點TAB時載入對應資料
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                const target = $(e.target).data('bs-target');
+
+                if (target === '#registered' && $('#registered-content').find('.spinner-border').length > 0) {
+                    loadRegistered();
+                } else if (target === '#cancelled' && $('#cancelled-content').find('.spinner-border').length > 0) {
+                    loadCancelled();
+                } else if (target === '#completed' && $('#completed-content').find('.spinner-border').length > 0) {
+                    loadCompleted();
+                } else if (target === '#absent' && $('#absent-content').find('.spinner-border').length > 0) {
+                    loadAbsent();
+                }
+            });
+        });
+    </script>
+}

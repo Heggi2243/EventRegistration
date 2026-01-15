@@ -2,6 +2,20 @@
 
 namespace EventRegistration.Models
 {
+
+    // 報名狀態
+    public enum RegistrationStatus
+    {
+        [Display(Name = "已取消")]
+        Cancelled = 0,
+
+        [Display(Name = "已報名")]
+        Registered = 1,
+
+        [Display(Name = "缺席")]
+        Absent = 2
+    }
+
     public class Registration
     {
         public int Id { get; set; }
@@ -42,8 +56,12 @@ namespace EventRegistration.Models
 
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
+        public RegistrationStatus Status { get; set; } = RegistrationStatus.Registered;
+
         // 導覽屬性：關聯到活動
         public Event? Event { get; set; }
 
     }
+
+
 }
