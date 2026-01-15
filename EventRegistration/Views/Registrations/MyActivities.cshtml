@@ -1,0 +1,239 @@
+﻿@{
+    ViewData["Title"] = "我的活動";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="display-5">我的活動</h2>
+        <p class="text-muted">查看您的報名記錄與活動狀態 - 學號：<strong>@ViewBag.StudentId</strong></p>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <!-- TAB 導覽列 -->
+        <ul class="nav nav-tabs" id="myEventsTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="registered-tab" data-bs-toggle="tab"
+                        data-bs-target="#registered" type="button" role="tab">
+                    已報名 <span class="badge bg-primary" id="registered-count">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab"
+                        data-bs-target="#cancelled" type="button" role="tab">
+                    已取消 <span class="badge bg-warning text-dark" id="cancelled-count">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="completed-tab" data-bs-toggle="tab"
+                        data-bs-target="#completed" type="button" role="tab">
+                    已結束 <span class="badge bg-success" id="completed-count">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="absent-tab" data-bs-toggle="tab"
+                        data-bs-target="#absent" type="button" role="tab">
+                    缺席紀錄 <span class="badge bg-danger" id="absent-count">0</span>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab 內容區 -->
+        <div class="tab-content p-4 border border-top-0 rounded-bottom" id="myEventsTabContent">
+            <!-- 已報名 TAB -->
+            <div class="tab-pane fade show active" id="registered" role="tabpanel">
+                <div id="registered-content">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 已取消 TAB -->
+            <div class="tab-pane fade" id="cancelled" role="tabpanel">
+                <div id="cancelled-content">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-warning" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 已結束 TAB -->
+            <div class="tab-pane fade" id="completed" role="tabpanel">
+                <div id="completed-content">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 缺席紀錄 TAB -->
+            <div class="tab-pane fade" id="absent" role="tabpanel">
+                <div id="absent-content">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-danger" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2 text-muted">載入資料中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const studentId = '@ViewBag.StudentId';
+            let loadedTabs = { registered: false, cancelled: false, completed: false, absent: false };
+
+            // 渲染活動卡片
+            function renderEvents(data, containerId) {
+                const container = $(`#${containerId}`);
+
+                if (data.length === 0) {
+                    container.html(`
+                        <div class="alert alert-info text-center" role="alert">
+                            <h5>沒有紀錄</h5>
+                            <p class="mb-0">此分類尚無資訊</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                let html = '<div class="row">';
+                data.forEach(item => {
+                    html += `
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">${item.eventName}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-2">
+                                        <strong>活動類型：</strong>
+                                        <span class="badge bg-info text-dark">${item.eventType}</span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>活動日期：</strong> ${item.startDate}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>參加人數：</strong>
+                                        <span class="badge bg-primary">${item.participantCount} 人</span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>素食需求：</strong>${item.isVegetarian ? '是' : '否'}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>報名時間：</strong>
+                                        <small>${item.registrationDate}</small>
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>狀態：</strong>
+                                        <span class="badge bg-success">${item.status}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.html(html);
+
+                // 更新Badge數量
+                $(`#${containerId.replace('-content', '-count')}`).text(data.length);
+            }
+
+            // 載入已報名活動
+            function loadRegistered() {
+                $.ajax({
+                    url: '@Url.Action("GetRegistered", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId },
+                    success: function (data) {
+                        renderEvents(data, 'registered-content');
+                        loadedTabs.registered = true;
+                    },
+                    error: function () {
+                        $('#registered-content').html('<div class="alert alert-danger">載入失敗，請重新整理頁面</div>');
+                    }
+                });
+            }
+
+            // 載入已取消活動
+            function loadCancelled() {
+                $.ajax({
+                    url: '@Url.Action("GetCancelled", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId },
+                    success: function (data) {
+                        renderEvents(data, 'cancelled-content');
+                        loadedTabs.cancelled = true;
+                    },
+                    error: function () {
+                        $('#cancelled-content').html('<div class="alert alert-danger">載入失敗</div>');
+                    }
+                });
+            }
+
+            // 載入已結束活動
+            function loadCompleted() {
+                $.ajax({
+                    url: '@Url.Action("GetCompleted", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId },
+                    success: function (data) {
+                        renderEvents(data, 'completed-content');
+                        loadedTabs.completed = true;
+                    },
+                    error: function () {
+                        $('#completed-content').html('<div class="alert alert-danger">載入失敗</div>');
+                    }
+                });
+            }
+
+            // 載入缺席紀錄
+            function loadAbsent() {
+                $.ajax({
+                    url: '@Url.Action("GetAbsent", "Registrations")',
+                    type: 'GET',
+                    data: { studentId: studentId },
+                    success: function (data) {
+                        renderEvents(data, 'absent-content');
+                        loadedTabs.absent = true;
+                    },
+                    error: function () {
+                        $('#absent-content').html('<div class="alert alert-danger">載入失敗</div>');
+                    }
+                });
+            }
+
+            // 頁面載入時先載入「已報名」TAB
+            loadRegistered();
+
+            // 點擊 TAB 時載入對應資料（Lazy Loading）
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                const target = $(e.target).data('bs-target');
+
+                if (target === '#cancelled' && !loadedTabs.cancelled) {
+                    loadCancelled();
+                } else if (target === '#completed' && !loadedTabs.completed) {
+                    loadCompleted();
+                } else if (target === '#absent' && !loadedTabs.absent) {
+                    loadAbsent();
+                }
+            });
+        });
+    </script>
+}

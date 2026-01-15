@@ -23,6 +23,9 @@ namespace EventRegistration.Models
         [Required]
         public int EventId { get; set; }
 
+        [Required]
+        public int UserId { get; set; }
+
         [Required(ErrorMessage ="姓名為必填")]
         [StringLength(50)]
         [Display(Name = "學生姓名")]
@@ -60,6 +63,7 @@ namespace EventRegistration.Models
 
         // 導覽屬性：關聯到活動
         public Event? Event { get; set; }
+        public User? User { get; set; }
 
     }
 

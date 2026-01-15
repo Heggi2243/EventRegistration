@@ -146,5 +146,147 @@ namespace EventRegistration.Controllers
             return RedirectToAction(nameof(Admin));
         }
 
+        /* ================== 學生個人報名紀錄 ================== */
+
+
+        // GET: Registrations/MyActivities?studentId=A1234567
+        public IActionResult MyActivities(string? studentId)
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+              
+                return View("StudentLogin");
+            }
+
+            ViewBag.StudentId = studentId;
+            return View();
+        }
+
+        // AJAX API: 取得「已報名」的活動
+        [HttpGet]
+        public async Task<IActionResult> GetRegistered(string studentId)
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return Json(new { success = false, message = "學號不可為空" });
+            }
+
+            var registrations = await _context.Registrations
+                .Include(r => r.Event)
+                .Where(r => r.StudentId == studentId &&
+                           r.Status == RegistrationStatus.Registered &&
+                           r.Event!.EndDate >= DateTime.Today)
+                .OrderBy(r => r.Event!.StartDate)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Event!.EventName,
+                    r.Event.EventType,
+                    StartDate = r.Event.StartDate.ToString("yyyy/MM/dd"),
+                    EndDate = r.Event.EndDate.ToString("yyyy/MM/dd"),
+                    r.ParticipantCount,
+                    r.IsVegetarian,
+                    RegistrationDate = r.RegistrationDate.ToString("yyyy/MM/dd HH:mm"),
+                    Status = "已報名"
+                })
+                .ToListAsync();
+
+            return Json(registrations);
+        }
+
+        // AJAX API: 取得「已取消」的活動
+        [HttpGet]
+        public async Task<IActionResult> GetCancelled(string studentId)
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return Json(new { success = false, message = "學號不可為空" });
+            }
+
+            var registrations = await _context.Registrations
+                .Include(r => r.Event)
+                .Where(r => r.StudentId == studentId &&
+                           r.Status == RegistrationStatus.Cancelled)
+                .OrderByDescending(r => r.RegistrationDate)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Event!.EventName,
+                    r.Event.EventType,
+                    StartDate = r.Event.StartDate.ToString("yyyy/MM/dd"),
+                    EndDate = r.Event.EndDate.ToString("yyyy/MM/dd"),
+                    r.ParticipantCount,
+                    r.IsVegetarian,
+                    RegistrationDate = r.RegistrationDate.ToString("yyyy/MM/dd HH:mm"),
+                    Status = "已取消"
+                })
+                .ToListAsync();
+
+            return Json(registrations);
+        }
+
+        // AJAX API: 取得「已結束」的活動
+        [HttpGet]
+        public async Task<IActionResult> GetCompleted(string studentId)
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return Json(new { success = false, message = "學號不可為空" });
+            }
+
+            var registrations = await _context.Registrations
+                .Include(r => r.Event)
+                .Where(r => r.StudentId == studentId &&
+                           r.Status == RegistrationStatus.Registered &&
+                           r.Event!.EndDate < DateTime.Today)
+                .OrderByDescending(r => r.Event!.EndDate)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Event!.EventName,
+                    r.Event.EventType,
+                    StartDate = r.Event.StartDate.ToString("yyyy/MM/dd"),
+                    EndDate = r.Event.EndDate.ToString("yyyy/MM/dd"),
+                    r.ParticipantCount,
+                    r.IsVegetarian,
+                    RegistrationDate = r.RegistrationDate.ToString("yyyy/MM/dd HH:mm"),
+                    Status = "已結束"
+                })
+                .ToListAsync();
+
+            return Json(registrations);
+        }
+
+        // AJAX API: 取得「缺席紀錄」
+        [HttpGet]
+        public async Task<IActionResult> GetAbsent(string studentId)
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return Json(new { success = false, message = "學號不可為空" });
+            }
+
+            var registrations = await _context.Registrations
+                .Include(r => r.Event)
+                .Where(r => r.StudentId == studentId &&
+                           r.Status == RegistrationStatus.Absent)
+                .OrderByDescending(r => r.Event!.EndDate)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Event!.EventName,
+                    r.Event.EventType,
+                    StartDate = r.Event.StartDate.ToString("yyyy/MM/dd"),
+                    EndDate = r.Event.EndDate.ToString("yyyy/MM/dd"),
+                    r.ParticipantCount,
+                    r.IsVegetarian,
+                    RegistrationDate = r.RegistrationDate.ToString("yyyy/MM/dd HH:mm"),
+                    Status = "缺席"
+                })
+                .ToListAsync();
+
+            return Json(registrations);
+        }
+
     }
 }
