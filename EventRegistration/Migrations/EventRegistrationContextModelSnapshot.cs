@@ -30,6 +30,10 @@ namespace EventRegistration.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Department")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -38,9 +42,8 @@ namespace EventRegistration.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("EventType")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -59,9 +62,10 @@ namespace EventRegistration.Migrations
                         new
                         {
                             Id = 1,
+                            Department = "C",
                             EndDate = new DateTime(2024, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EventName = "資訊系迎新茶會",
-                            EventType = "系內活動",
+                            EventType = 0,
                             IsActive = true,
                             MaxParticipants = 100,
                             StartDate = new DateTime(2024, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -71,7 +75,7 @@ namespace EventRegistration.Migrations
                             Id = 2,
                             EndDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EventName = "校園路跑活動",
-                            EventType = "自由參加",
+                            EventType = 1,
                             IsActive = true,
                             MaxParticipants = 200,
                             StartDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -79,9 +83,10 @@ namespace EventRegistration.Migrations
                         new
                         {
                             Id = 3,
+                            Department = "B",
                             EndDate = new DateTime(2024, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EventName = "企管系職涯講座",
-                            EventType = "系內活動",
+                            EventType = 0,
                             IsActive = true,
                             MaxParticipants = 80,
                             StartDate = new DateTime(2024, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)

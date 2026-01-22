@@ -8,17 +8,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EventRegistration.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserSystem : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "UserId",
-                table: "Registrations",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EventType = table.Column<int>(type: "int", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaxParticipants = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Users",
@@ -42,10 +54,50 @@ namespace EventRegistration.Migrations
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Registrations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    StudentName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParticipantCount = table.Column<int>(type: "int", nullable: false),
+                    IsVegetarian = table.Column<bool>(type: "bit", nullable: false),
+                    ContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Remarks = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Registrations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Registrations_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Registrations_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "Events",
-                columns: new[] { "Id", "EndDate", "EventName", "EventType", "IsActive", "MaxParticipants", "StartDate" },
-                values: new object[] { 3, new DateTime(2024, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "企管系職涯講座", "系內活動", true, 80, new DateTime(2024, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                columns: new[] { "Id", "Department", "EndDate", "EventName", "EventType", "IsActive", "MaxParticipants", "StartDate" },
+                values: new object[,]
+                {
+                    { 1, "C", new DateTime(2024, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "資訊系迎新茶會", 0, true, 100, new DateTime(2024, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, null, new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "校園路跑活動", 1, true, 200, new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, "B", new DateTime(2024, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "企管系職涯講座", 0, true, 80, new DateTime(2024, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
 
             migrationBuilder.InsertData(
                 table: "Users",
@@ -66,6 +118,11 @@ namespace EventRegistration.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Registrations_EventId",
+                table: "Registrations",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Registrations_UserId",
                 table: "Registrations",
                 column: "UserId");
@@ -75,38 +132,19 @@ namespace EventRegistration.Migrations
                 table: "Users",
                 column: "Account",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Registrations_Users_UserId",
-                table: "Registrations",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Registrations_Users_UserId",
-                table: "Registrations");
+            migrationBuilder.DropTable(
+                name: "Registrations");
+
+            migrationBuilder.DropTable(
+                name: "Events");
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Registrations_UserId",
-                table: "Registrations");
-
-            migrationBuilder.DeleteData(
-                table: "Events",
-                keyColumn: "Id",
-                keyValue: 3);
-
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "Registrations");
         }
     }
 }

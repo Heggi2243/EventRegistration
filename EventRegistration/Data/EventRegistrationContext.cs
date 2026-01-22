@@ -12,7 +12,7 @@ namespace EventRegistration.Data
 
         public DbSet<Event> Events { get; set; }
         public DbSet<Registration> Registrations { get; set; }
-        public DbSet<User> Users { get; set; }  // ⭐ 新增
+        public DbSet<User> Users { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,7 +41,8 @@ namespace EventRegistration.Data
                 {
                     Id = 1,
                     EventName = "資訊系迎新茶會",
-                    EventType = "系內活動",
+                    EventType = EventType.DepartmentOnly,
+                    Department = "C",
                     StartDate = new DateTime(2024, 9, 15),
                     EndDate = new DateTime(2024, 9, 15),
                     MaxParticipants = 100,
@@ -51,7 +52,8 @@ namespace EventRegistration.Data
                 {
                     Id = 2,
                     EventName = "校園路跑活動",
-                    EventType = "自由參加",
+                    EventType = EventType.OpenToAll, 
+                    Department = null,
                     StartDate = new DateTime(2024, 10, 1),
                     EndDate = new DateTime(2024, 10, 1),
                     MaxParticipants = 200,
@@ -61,7 +63,8 @@ namespace EventRegistration.Data
                 {
                     Id = 3,
                     EventName = "企管系職涯講座",
-                    EventType = "系內活動",
+                    EventType = EventType.DepartmentOnly,
+                    Department = "B",
                     StartDate = new DateTime(2024, 11, 20),
                     EndDate = new DateTime(2024, 11, 20),
                     MaxParticipants = 80,
@@ -77,7 +80,7 @@ namespace EventRegistration.Data
                     Id = 1,
                     Name = "系統管理員",
                     Account = "admin",
-                    Password = "admin123",  // 實際應用中應使用雜湊加密
+                    Password = "admin123",  // 實際應使用雜湊加密
                     Email = "admin@school.edu.tw",
                     Role = UserRole.SystemAdmin,
                     CreatedAt = new DateTime(2020, 1, 1),

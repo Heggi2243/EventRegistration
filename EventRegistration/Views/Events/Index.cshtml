@@ -23,7 +23,14 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text">
-                            <span class="badge bg-info text-dark">@item.EventType</span>
+                            <span class="badge bg-info text-dark">
+                                @EventTypeHelper.GetDisplayName(item.EventType)
+                            </span>
+                            @if (!string.IsNullOrEmpty(item.Department))
+                            {
+                                <br />
+                                <small class="text-muted">@DepartmentHelper.GetDepartmentName(item.Department)</small>
+                            }
                         </p>
                         <p class="mb-2">
                             <strong>活動日期：</strong><br />

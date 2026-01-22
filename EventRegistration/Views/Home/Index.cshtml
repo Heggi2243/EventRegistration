@@ -1,8 +1,40 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "首頁";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row align-items-center" style="min-height: 70vh;">
+        <div class="col-lg-6 text-center text-lg-start">
+            <h1 class="display-3 fw-bold text-primary mb-4">
+                歡迎來到溪夏大學
+            </h1>
+            <p class="lead text-muted mb-4">
+                快來探索精彩的校園活動！<br />
+                立即登入手刀報名最新活動。
+            </p>
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-lg-start">
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg px-5 py-3">
+                    <i class="bi bi-box-arrow-in-right"></i> 學生登入(還沒實作)
+                </a>
+                <a asp-controller="Events" asp-action="Index" class="btn btn-outline-primary btn-lg px-5 py-3">
+                    <i class="bi bi-calendar-event"></i> 瀏覽活動
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center mt-5 mt-lg-0">
+            <div class="p-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="currentColor" class="bi bi-mortarboard-fill text-primary opacity-75" viewBox="0 0 16 16">
+                    <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917l-7.5-3.5Z" />
+                    <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466 4.176 9.032Z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+</style>
